@@ -1,0 +1,88 @@
+body {
+    background-color: green;
+}
+
+header {
+    margin-bottom: 10px;
+    position: relative;
+    font-size: 36px;
+    background-color: green;
+    color: white;
+    text-align: center;    
+}
+
+.card {
+    display: flex;    
+    background-color: white;
+    border: 5px none black;
+    margin: 10px;
+    border-radius: 10px;
+    height: 200px;
+    width: 125px;
+    font-size: 48px;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+}
+
+.redcard {
+    
+        display: flex;    
+        background-color: white;
+        border: 5px none black;
+        margin: 10px;
+        border-radius: 10px;
+        height: 200px;
+        width: 125px;
+        font-size: 48px;
+        font-weight: bold;
+        justify-content: center;
+        align-items: center;
+        color: red;
+    
+}
+
+.dealerHand {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    text-align: center;    
+}
+
+.playerHand {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;    
+}
+
+#message{
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 5px;
+    color: white;
+}
+.internal{
+    text-align: center;    
+}
+#play {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.player-button {    
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    visibility: hidden;
+}
+
+.pbutton {
+    margin: 5px;
+    font-size: 20px;
+}
+
+h1 {
+    text-align: center;
+}
