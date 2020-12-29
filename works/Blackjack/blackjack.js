@@ -76,7 +76,8 @@ function addCard() {
     total = calcTotal(playerHand);
     if (total > 21){
         document.getElementById("pHandHead").innerHTML = "Player hand total: " + total + " YOU BUSTED";
-        endGame();
+        playing = false;
+        dealerTurn();
     } else {
         document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;
     }
@@ -84,24 +85,26 @@ function addCard() {
 
 //Add cards to the dealers hand
 function daddCard() {
-    dealerHand.push(deck.shift());
-    let nextCard = Object.keys(dealerHand).length - 1;
-    let pface = dealerHand[nextCard].Face;
-    let psuit = dealerHand[nextCard].Suit;
-    var newCard = document.createElement("p");
-    if (psuit === suit[1] || psuit === suit[3]) {
-        newCard.className = 'redcard';
-    } else {
-        newCard.className = 'card';
-    }
-    if(dealerHand.length != 2) {
-        newCard.innerHTML = pface + " " + psuit;
-    } else {
-        newCard.id = "dcardtwo";
-    }
     
-    var place = document.getElementsByClassName("dealerHand")[0];
-    place.appendChild(newCard);      
+        dealerHand.push(deck.shift());
+        let nextCard = Object.keys(dealerHand).length - 1;
+        let pface = dealerHand[nextCard].Face;
+        let psuit = dealerHand[nextCard].Suit;
+        var newCard = document.createElement("p");
+        if (psuit === suit[1] || psuit === suit[3]) {
+            newCard.className = 'redcard';
+        } else {
+            newCard.className = 'card';
+        }
+        if(dealerHand.length != 2) {
+            newCard.innerHTML = pface + " " + psuit;
+        } else {
+            newCard.id = "dcardtwo";
+        }
+        
+        var place = document.getElementsByClassName("dealerHand")[0];
+        place.appendChild(newCard);      
+    
 }
 
 //Players turn
@@ -110,59 +113,62 @@ function playerTurn() {
     let total = calcTotal(playerHand);
     if (total === 21) {
         document.getElementById("pHandHead").innerHTML = "Player Hand: Black Jack!!!!" + total;
-        endGame();        
+        playing = false;
+        dealerTurn();
     } else {
-        document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;
+        document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;    
+        let hit = document.getElementById("hit");    
+        let stay = document.getElementById("stay");
+        hit.style.visibility = "visible";    
+        stay.style.visibility = "visible";
+        hit.addEventListener('click', addCard);
+        stay.addEventListener('click', dealerTurn); 
     }
-    let hit = document.getElementById("hit");    
-    let stay = document.getElementById("stay");
-    hit.style.visibility = "visible";    
-    stay.style.visibility = "visible";
-    hit.addEventListener('click', addCard);
-    stay.addEventListener('click', dealerTurn); 
     
 }
 
 //Dealers turn
 function dealerTurn() {
-    document.getElementById("message").innerHTML = "Dealer's turn";
-    let nextCard = Object.keys(dealerHand).length - 1;
-    let pface = dealerHand[nextCard].Face;
-    let psuit = dealerHand[nextCard].Suit;    
-    document.getElementById("dcardtwo").innerHTML = pface +" " + psuit;
-    let total = calcTotal(dealerHand);
-    document.getElementById("dHandHead").innerHTML = "Dealer hand total: " + total;
-    if(total === 21){
-        document.getElementById("dHandHead").innerHTML = "Dealer hand: BLACK JACK" + total;
-        endGame();
-    }    
-        if(total <= 16){
-            while(total <= 16) {
-                if (total < 16) {
-                    daddCard();                
-                } else {
-                    for (x in dealerHand) {
-                        if (dealerHand[x].Value === 11) {
-                            dealerHand[x].Value = 1;
-                            daddCard();
+    if (playing) {
+        document.getElementById("message").innerHTML = "Dealer's turn";
+        let nextCard = Object.keys(dealerHand).length - 1;
+        let pface = dealerHand[nextCard].Face;
+        let psuit = dealerHand[nextCard].Suit;    
+        document.getElementById("dcardtwo").innerHTML = pface +" " + psuit;
+        let total = calcTotal(dealerHand);
+        document.getElementById("dHandHead").innerHTML = "Dealer hand total: " + total;
+        if(total === 21){
+            document.getElementById("dHandHead").innerHTML = "Dealer hand: BLACK JACK" + total;            
+        } else {    
+            if(total <= 16){
+                while(total <= 16) {
+                    if (total < 16) {
+                        daddCard();                
+                    } else {
+                        for (x in dealerHand) {
+                            if (dealerHand[x].Value === 11) {
+                                dealerHand[x].Value = 1;
+                                daddCard();
+                            }
                         }
                     }
-                }
-                total = calcTotal(dealerHand);
-                if (total > 21){    
-                    for (x in dealerHand) {
-                        if (dealerHand[x].Value === 11) {
-                            dealerHand[x].Value = 1;
-                            total = calcTotal(dealerHand);
+                    total = calcTotal(dealerHand);
+                    if (total > 21){    
+                        for (x in dealerHand) {
+                            if (dealerHand[x].Value === 11) {
+                                dealerHand[x].Value = 1;
+                                total = calcTotal(dealerHand);
+                            }
                         }
                     }
                 }
             }                        
-       }    
-    if (total > 21) {
-        document.getElementById("dHandHead").innerHTML = "Dealer hand: Dealer Busted!";        
-    } else {
-        document.getElementById("dHandHead").innerHTML = "Dealer hand total: " + total;
+        }    
+        if (total > 21) {
+            document.getElementById("dHandHead").innerHTML = "Dealer hand: Dealer Busted!";        
+        } else {
+            document.getElementById("dHandHead").innerHTML = "Dealer hand total: " + total;
+        }
     }
     endGame();
 }
