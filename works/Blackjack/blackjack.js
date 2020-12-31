@@ -43,7 +43,8 @@ function deal() {
     daddCard();
     addCard();
     daddCard();
-    playerTurn();
+    playerTurn();    
+    
 }
 
 //Add cards to the players hand
@@ -55,32 +56,27 @@ function addCard() {
     var newCard = document.createElement("p");
     
     if (psuit === suit[1] || psuit === suit[3]) {
-        newCard.className = 'redcard';
-        
+        newCard.className = 'redcard';        
     } else {
-        newCard.className = 'card';
-        
+        newCard.className = 'card';        
     }
+
     newCard.innerHTML = pface + " " + psuit;    
     var place = document.getElementsByClassName("playerHand")[0];
-    place.appendChild(newCard); 
-    let total = calcTotal(playerHand);
-    
-    if (total > 21){
-        for (let i = 0; i < playerHand.length; i++) {
-            if(playerHand[i].Value === 11) {
-                playerHand[i].Value = 1;
-            }
-        }
-    }
+    place.appendChild(newCard);
     total = calcTotal(playerHand);
-    if (total > 21){
-        document.getElementById("pHandHead").innerHTML = "Player hand total: " + total + " YOU BUSTED";
-        playing = false;
-        dealerTurn();
-    } else {
-        document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;
-    }
+            if (total > 21){
+                playerHand = acesCheck(playerHand);
+            }
+
+            total = calcTotal(playerHand);
+            if (total > 21){        
+                document.getElementById("pHandHead").innerHTML = "Player hand total: " + total + " YOU BUSTED";
+                playing = false;
+                dealerTurn();
+            } else {
+                document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;
+            }     
 }
 
 //Add cards to the dealers hand
@@ -100,6 +96,7 @@ function daddCard() {
             newCard.innerHTML = pface + " " + psuit;
         } else {
             newCard.id = "dcardtwo";
+            
         }
         
         var place = document.getElementsByClassName("dealerHand")[0];
@@ -115,21 +112,41 @@ function playerTurn() {
         document.getElementById("pHandHead").innerHTML = "Player Hand: Black Jack!!!!" + total;
         playing = false;
         dealerTurn();
-    } else {
+        
+    } else {            
         document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;    
         let hit = document.getElementById("hit");    
         let stay = document.getElementById("stay");
+        let dd = document.getElementById("doubledown");
         hit.style.visibility = "visible";    
         stay.style.visibility = "visible";
+        dd.style.visibility = "visible";
         hit.addEventListener('click', addCard);
-        stay.addEventListener('click', dealerTurn); 
-    }
-    
+        stay.addEventListener('click', dealerTurn);
+        dd.addEventListener('click', addCard);
+        dd.addEventListener('click', dealerTurn);
+
+    }            
 }
 
 //Dealers turn
 function dealerTurn() {
+    let hit = document.getElementById("hit");
+    let dd = document.getElementById("doubledown");
+    let stay = document.getElementById("stay");
+
+    hit.style.visibility = "hidden";
+    hit.removeEventListener('click', addCard);
+
+    stay.style.visibility = "hidden";
+    stay.removeEventListener('click', dealerTurn);
+
+    dd.style.visibility = "hidden";
+    dd.removeEventListener('click', addCard);
+    dd.removeEventListener('click', dealerTurn);
+    
     if (playing) {
+        
         document.getElementById("message").innerHTML = "Dealer's turn";
         let nextCard = Object.keys(dealerHand).length - 1;
         let pface = dealerHand[nextCard].Face;
@@ -140,18 +157,25 @@ function dealerTurn() {
         if(total === 21){
             document.getElementById("dHandHead").innerHTML = "Dealer hand: BLACK JACK" + total;            
         } else {    
-            if(total <= 16){
-                while(total <= 16) {
-                    if (total < 16) {
-                        daddCard();                
-                    } else {
-                        for (x in dealerHand) {
-                            if (dealerHand[x].Value === 11) {
-                                dealerHand[x].Value = 1;
-                                daddCard();
-                            }
+            if(total <= 17){
+                
+                while(total <= 17) {  
+                    if (total === 17) {
+                        dealerHand = acesCheck(dealerHand);
+                        total = calcTotal(dealerHand);
+                        if (total === 17){
+                            break;
                         }
-                    }
+                    }                  
+                    if (total < 17) {
+                        daddCard();
+                    } else {
+                        dealerHand = acesCheck(dealerHand);
+                        total = calcTotal(dealerHand);
+                        if (total < 17) {
+                            daddCard();
+                        }
+                    }                    
                     total = calcTotal(dealerHand);
                     if (total > 21){    
                         for (x in dealerHand) {
@@ -161,6 +185,7 @@ function dealerTurn() {
                             }
                         }
                     }
+                    
                 }
             }                        
         }    
@@ -171,6 +196,7 @@ function dealerTurn() {
         }
     }
     endGame();
+        
 }
 
 //Calculate Total
@@ -182,13 +208,22 @@ function calcTotal(hand){
     return total;
 }
 
+function acesCheck(hand){
+    for (x in hand) {
+        if (hand[x].Value === 11){
+            hand[x].Value = 1;
+            let total = calcTotal(hand);
+            if (total === 12) {
+                break;
+            }
+        }
+    }
+    return hand;
+}
+
 //End game logic
 function endGame() {
-    let hit = document.getElementById("hit");
-    hit.style.visibility = "hidden";
-    let stay = document.getElementById("stay");
-    stay.style.visibility = "hidden";
-    
+       
     let plength = playerHand.length - 1 ;
     let dlength = dealerHand.length - 1 ;  
     let message = document.getElementById("message");  

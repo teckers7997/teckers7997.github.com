@@ -1,3 +1,11 @@
+@keyframes newCard {
+   0% {
+       opacity: 0;
+   } 
+   100% {
+       opacity: 1;
+   }
+}
 body {
     background-color: #086B11;
 }
@@ -23,6 +31,8 @@ header {
     font-weight: bold;
     justify-content: center;
     align-items: center;
+    animation-name: newCard;
+    animation-duration: 1s;
 }
 
 .redcard {
@@ -39,6 +49,8 @@ header {
         justify-content: center;
         align-items: center;
         color: red;
+        animation-name: newCard;
+        animation-duration: 1s;
     
 }
 
