@@ -51,6 +51,9 @@ function deal() {
 
 //Add cards to the players hand
 function addCard() {
+    doubleDown.style.visibility = "hidden";
+    doubleDown.removeEventListener('click', addCard);   
+
     playerHand.push(deck.shift());
     let nextCard = Object.keys(playerHand).length - 1;
     let pface = playerHand[nextCard].Face;
@@ -110,7 +113,7 @@ function playerTurn() {
     document.getElementById('message').innerHTML = "Players Turn";
     let total = calcTotal(playerHand);
     if (total === 21) {
-        document.getElementById("pHandHead").innerHTML = "Player Hand: Black Jack!!!!" + total;
+        document.getElementById("pHandHead").innerHTML = "Player Hand: Black Jack!!!!";
         playing = false;
         dealerTurn();        
     } else {            
@@ -133,10 +136,11 @@ function dealerTurn() {
 
     stay.style.visibility = "hidden";
     stay.removeEventListener('click', dealerTurn);
-
     doubleDown.style.visibility = "hidden";
     doubleDown.removeEventListener('click', addCard);
     doubleDown.removeEventListener('click', dealerTurn);
+
+    
     
     if (playing) {
         
@@ -174,7 +178,11 @@ function dealerTurn() {
                         total = calcTotal(dealerHand);                        
                     }                    
                 }
-            }                        
+            }
+            if (total === 22){
+                dealerHand = acesCheck(dealerHand);
+            }
+
         }    
         if (total > 21) {
             document.getElementById("dHandHead").innerHTML = "Dealer hand: Dealer Busted!";        
