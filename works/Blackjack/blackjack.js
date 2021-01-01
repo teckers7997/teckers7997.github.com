@@ -1,12 +1,15 @@
-var suit = ["&#9824;", "&#9829;", "&#9827;", "&#9830;"];
-var face = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-var value = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
-var playerHand = [];
-var dealerHand = [];
-var deck = [];
+const suit = ["&#9824;", "&#9829;", "&#9827;", "&#9830;"];
+const face = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+const value = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
+let playerHand = [];
+let dealerHand = [];
+let deck = [];
 let playing = false;
-let pbusted = false;
+
 const playTime = document.getElementById("play");
+const hit = document.getElementById("hit");    
+const stay = document.getElementById("stay");
+const doubleDown = document.getElementById("doubledown");
 playTime.addEventListener("click", deal);
 
 //Create the card deck
@@ -43,8 +46,7 @@ function deal() {
     daddCard();
     addCard();
     daddCard();
-    playerTurn();    
-    
+    playerTurn();        
 }
 
 //Add cards to the players hand
@@ -53,7 +55,7 @@ function addCard() {
     let nextCard = Object.keys(playerHand).length - 1;
     let pface = playerHand[nextCard].Face;
     let psuit = playerHand[nextCard].Suit;
-    var newCard = document.createElement("p");
+    let newCard = document.createElement("p");
     
     if (psuit === suit[1] || psuit === suit[3]) {
         newCard.className = 'redcard';        
@@ -62,21 +64,20 @@ function addCard() {
     }
 
     newCard.innerHTML = pface + " " + psuit;    
-    var place = document.getElementsByClassName("playerHand")[0];
+    let place = document.getElementsByClassName("playerHand")[0];
     place.appendChild(newCard);
     total = calcTotal(playerHand);
-            if (total > 21){
-                playerHand = acesCheck(playerHand);
-            }
-
-            total = calcTotal(playerHand);
-            if (total > 21){        
-                document.getElementById("pHandHead").innerHTML = "Player hand total: " + total + " YOU BUSTED";
-                playing = false;
-                dealerTurn();
-            } else {
-                document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;
-            }     
+    if (total > 21){
+        playerHand = acesCheck(playerHand);
+    }
+    total = calcTotal(playerHand);
+    if (total > 21){        
+        document.getElementById("pHandHead").innerHTML = "Player hand total: " + total + " YOU BUSTED";
+        playing = false;
+        dealerTurn();
+    } else {
+        document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;
+    }     
 }
 
 //Add cards to the dealers hand
@@ -111,29 +112,21 @@ function playerTurn() {
     if (total === 21) {
         document.getElementById("pHandHead").innerHTML = "Player Hand: Black Jack!!!!" + total;
         playing = false;
-        dealerTurn();
-        
+        dealerTurn();        
     } else {            
-        document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;    
-        let hit = document.getElementById("hit");    
-        let stay = document.getElementById("stay");
-        let dd = document.getElementById("doubledown");
+        document.getElementById("pHandHead").innerHTML = "Player hand total: " + total;        
         hit.style.visibility = "visible";    
         stay.style.visibility = "visible";
-        dd.style.visibility = "visible";
+        doubleDown.style.visibility = "visible";
         hit.addEventListener('click', addCard);
         stay.addEventListener('click', dealerTurn);
-        dd.addEventListener('click', addCard);
-        dd.addEventListener('click', dealerTurn);
-
+        doubleDown.addEventListener('click', addCard);
+        doubleDown.addEventListener('click', dealerTurn);
     }            
 }
 
 //Dealers turn
-function dealerTurn() {
-    let hit = document.getElementById("hit");
-    let dd = document.getElementById("doubledown");
-    let stay = document.getElementById("stay");
+function dealerTurn() {    
 
     hit.style.visibility = "hidden";
     hit.removeEventListener('click', addCard);
@@ -141,9 +134,9 @@ function dealerTurn() {
     stay.style.visibility = "hidden";
     stay.removeEventListener('click', dealerTurn);
 
-    dd.style.visibility = "hidden";
-    dd.removeEventListener('click', addCard);
-    dd.removeEventListener('click', dealerTurn);
+    doubleDown.style.visibility = "hidden";
+    doubleDown.removeEventListener('click', addCard);
+    doubleDown.removeEventListener('click', dealerTurn);
     
     if (playing) {
         
@@ -157,8 +150,7 @@ function dealerTurn() {
         if(total === 21){
             document.getElementById("dHandHead").innerHTML = "Dealer hand: BLACK JACK" + total;            
         } else {    
-            if(total <= 17){
-                
+            if(total <= 17){                
                 while(total <= 17) {  
                     if (total === 17) {
                         dealerHand = acesCheck(dealerHand);
@@ -178,14 +170,9 @@ function dealerTurn() {
                     }                    
                     total = calcTotal(dealerHand);
                     if (total > 21){    
-                        for (x in dealerHand) {
-                            if (dealerHand[x].Value === 11) {
-                                dealerHand[x].Value = 1;
-                                total = calcTotal(dealerHand);
-                            }
-                        }
-                    }
-                    
+                        dealerHand = acesCheck(dealerHand);
+                        total = calcTotal(dealerHand);                        
+                    }                    
                 }
             }                        
         }    
@@ -195,8 +182,7 @@ function dealerTurn() {
             document.getElementById("dHandHead").innerHTML = "Dealer hand total: " + total;
         }
     }
-    endGame();
-        
+    endGame();        
 }
 
 //Calculate Total
@@ -208,6 +194,7 @@ function calcTotal(hand){
     return total;
 }
 
+//Check for the value of aces
 function acesCheck(hand){
     for (x in hand) {
         if (hand[x].Value === 11){
@@ -224,12 +211,10 @@ function acesCheck(hand){
 //End game logic
 function endGame() {
        
-    let plength = playerHand.length - 1 ;
-    let dlength = dealerHand.length - 1 ;  
     let message = document.getElementById("message");  
-    
     let ptotal = calcTotal(playerHand);
     let dtotal = calcTotal(dealerHand);
+
     if (ptotal > 21) {
         message.innerHTML = "You Busted! You lose";
     } else if (dtotal > 21) {
@@ -251,9 +236,9 @@ function removeCards() {
     playTime.removeEventListener('click', removeCards);
     let premove = document.getElementById("phand");
     let dremove = document.getElementById("dlrHand");
-    dealerHand = [];
-    playerHand = [];
-    deck = [];    
+    dealerHand.length = 0;
+    playerHand.length = 0;
+    deck.length = 0;    
 
     while(premove.firstChild){
         premove.removeChild(premove.lastChild);     
