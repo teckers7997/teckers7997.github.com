@@ -1,0 +1,53 @@
+html{
+    background-color: #040B10;
+    color: #D6e9f5; 
+}
+
+h1 {
+    font-size: 48px;
+}
+
+nav {
+    background-color: #354F61;
+}
+
+.navbar li {    
+    float: left;    
+}
+
+.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li a {
+    display: block;
+    text-align: center;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-size: 18px;    
+}
+
+li a:hover {
+    background-color: #D6e9f5;
+    color: #040B10;
+}
+
+.current {
+    background-color: #D6e9f5;
+    color: #040B10;
+}
+
+a:link {
+    color: #e07e78;    
+}
+
+a:visited {
+    color: #e07e78;
+}
+
+.contactinfo {
+    list-style-type: square;
+}
